@@ -47,13 +47,12 @@ weekendScheduling: boolean
 }
 export type scheduleItems = {
     id: string
-userId: string
 taskId: string
 title: string
 date: Date
 startTime: string
 endTime: string
-locked: boolean
+
 completed: boolean
 }
 
