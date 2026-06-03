@@ -1,4 +1,41 @@
+"use client";
+
+import { useState } from "react";
+import { Task, TaskPriority, TaskType } from "@/types/types";
+
 export default function AddPlanPage() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  const [title, setTitle] = useState("");
+  const [type, setType] = useState<TaskType>("Task");
+  const [duration, setDuration] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [priority, setPriority] = useState<TaskPriority>("Medium");
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const newTask: Task = {
+      id: crypto.randomUUID(),
+      title,
+      type,
+      duration: Number(duration),
+      deadline: deadline ? new Date(deadline) : null,
+      priority,
+      completed: false,
+      description:"Chicken",
+      createdAt: new Date(),
+    };
+
+    setTasks([...tasks, newTask]);
+
+    setTitle("");
+    setType("Task");
+    setDuration("");
+    setDeadline("");
+    setPriority("Medium");
+  }
+
   return (
     <main className="min-h-screen bg-gray-50 px-6 py-8">
       <section className="mx-auto max-w-2xl">
@@ -7,19 +44,29 @@ export default function AddPlanPage() {
           Start by adding something you need to do.
         </p>
 
-        <form className="mt-8 rounded-2xl bg-white p-6 shadow-sm">
+        <form
+          onSubmit={handleSubmit}
+          className="mt-8 rounded-2xl bg-white p-6 shadow-sm"
+        >
           <label className="block">
             <span className="font-medium">Plan name</span>
             <input
               type="text"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
               placeholder="Example: Study for math test"
               className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3"
+              required
             />
           </label>
 
           <label className="mt-5 block">
             <span className="font-medium">Type</span>
-            <select className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3">
+            <select
+              value={type}
+              onChange={(event) => setType(event.target.value as TaskType)}
+              className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3"
+            >
               <option>Task</option>
               <option>Event</option>
               <option>Deadline</option>
@@ -32,8 +79,11 @@ export default function AddPlanPage() {
             <span className="font-medium">Duration</span>
             <input
               type="number"
+              value={duration}
+              onChange={(event) => setDuration(event.target.value)}
               placeholder="Minutes, example: 60"
               className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3"
+              required
             />
           </label>
 
@@ -41,13 +91,21 @@ export default function AddPlanPage() {
             <span className="font-medium">Deadline</span>
             <input
               type="date"
+              value={deadline}
+              onChange={(event) => setDeadline(event.target.value)}
               className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3"
             />
           </label>
 
           <label className="mt-5 block">
             <span className="font-medium">Priority</span>
-            <select className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3">
+            <select
+              value={priority}
+              onChange={(event) =>
+                setPriority(event.target.value as TaskPriority)
+              }
+              className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3"
+            >
               <option>Low</option>
               <option>Medium</option>
               <option>High</option>
@@ -62,6 +120,34 @@ export default function AddPlanPage() {
             Save Plan
           </button>
         </form>
+
+        <section className="mt-8">
+          <h2 className="text-xl font-bold">Your Plans</h2>
+
+          {tasks.length === 0 ? (
+            <p className="mt-3 text-gray-600">No plans added yet.</p>
+          ) : (
+            <div className="mt-4 space-y-4">
+              {tasks.map((task) => (
+                <div
+                  key={task.id}
+                  className="rounded-2xl bg-white p-5 shadow-sm"
+                >
+                  <h3 className="font-semibold">{task.title}</h3>
+                  <p className="mt-1 text-sm text-gray-600">
+                    {task.type} • {task.duration} minutes • {task.priority}
+                  </p>
+
+                  {task.deadline && (
+                    <p className="mt-1 text-sm text-gray-600">
+                      Deadline: {task.deadline.toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
       </section>
     </main>
   );

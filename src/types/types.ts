@@ -1,33 +1,26 @@
 import { randomUUID } from "crypto";
-type TaskOption = {
-    id: string
-    label: string
+export type TaskType = "Task" | "Event" | "Deadline" | "Chore" | "Study";
+
+export type TaskPriority = "Low" | "Medium" | "High" | "Urgent";
+export type Task = {
+    id: string;
+    title: string;
+    type: TaskType;
+    duration: number;
+    deadline: Date | null;
+    priority: TaskPriority;
+    description : string;
+    completed : boolean;
+    createdAt : Date;
 }
-type PriorityOption = {
-    id: string
-    label: string
-}
-type Task = {
-    id: string
-    userID: string
-    title: string
-    type: "text" | "multiple-choice"
-    options?: TaskOption[]
-    duration: number
-    deadline: Date
-    priority: string[]
-    notes : string
-    completed : boolean
-    createdAt : Date
-}
-type Users = {
+export type Users = {
     id: string
     name: string
     email: string
     createdAt: Date
 }
 
-type Availability = {
+export type Availability = {
     id: string
     userId: string
     dayOfWeek: string[]
@@ -36,7 +29,7 @@ type Availability = {
     isAvailable: string
     repeatsWeekly: boolean
 }
-type Preferences = {
+export type Preferences = {
 id : string
 userId: string
 wakeTime: string
@@ -46,7 +39,7 @@ preferredWorkTime: string
 maxTaskBlockLength: number
 weekendScheduling: boolean
 }
-type scheduleItems = {
+export type scheduleItems = {
     id: string
 userId: string
 taskId: string
