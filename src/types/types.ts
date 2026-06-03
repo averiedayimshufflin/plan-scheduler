@@ -29,7 +29,7 @@ export type DayOfWeek =
   | "Sunday";
 export type Availability = {
     id: string
-    dayOfWeek: DayOfWeek;
+    day: DayOfWeek;
     startTime: string
     endTime: string
     isAvailable: "Available" | "Unavailable";
