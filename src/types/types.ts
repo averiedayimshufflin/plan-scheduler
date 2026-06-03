@@ -19,14 +19,20 @@ export type Users = {
     email: string
     createdAt: Date
 }
-
+export type DayOfWeek =
+  | "Monday"
+  | "Tuesday"
+  | "Wednesday"
+  | "Thursday"
+  | "Friday"
+  | "Saturday"
+  | "Sunday";
 export type Availability = {
     id: string
-    userId: string
-    dayOfWeek: string[]
+    dayOfWeek: DayOfWeek;
     startTime: string
     endTime: string
-    isAvailable: string
+    isAvailable: "Available" | "Unavailable";
     repeatsWeekly: boolean
 }
 export type Preferences = {
