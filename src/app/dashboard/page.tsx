@@ -32,7 +32,12 @@ export default function DashboardPage() {
               >
                 Add Plan
               </a>
-
+                <a
+  href="/availability"
+  className="rounded-xl border border-gray-300 px-4 py-3 text-center"
+>
+  Set Availability
+</a>
               <a
                 href="/schedule"
                 className="rounded-xl border border-gray-300 px-4 py-3 text-center"
