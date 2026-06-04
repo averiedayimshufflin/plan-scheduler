@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Availability, DayOfWeek } from "@/types/types";
 
 const days: DayOfWeek[] = [
@@ -23,6 +23,21 @@ export default function AvailabilityPage() {
   const [endTime, setEndTime] = useState("17:00");
   const [isAvailable,setAvailibility] = useState("UnAvailable")
   const [repeatsWeekly, setRepeatsWeekly] = useState(true);
+
+  useEffect(() => {
+  const savedAvailability = localStorage.getItem("availabilityBlocks");
+
+  if (savedAvailability) {
+    setAvailabilityBlocks(JSON.parse(savedAvailability));
+  }
+}, []);
+
+useEffect(() => {
+  localStorage.setItem(
+    "availabilityBlocks",
+    JSON.stringify(availabilityBlocks)
+  );
+}, [availabilityBlocks]);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

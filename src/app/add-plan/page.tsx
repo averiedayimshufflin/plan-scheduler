@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Task, TaskPriority, TaskType } from "@/types/types";
 
 export default function AddPlanPage() {
@@ -11,6 +11,24 @@ export default function AddPlanPage() {
   const [duration, setDuration] = useState("");
   const [deadline, setDeadline] = useState("");
   const [priority, setPriority] = useState<TaskPriority>("Medium");
+
+  useEffect(() => {
+    const savedTasks = localStorage.getItem("tasks");
+
+    if (savedTasks) {
+      const parsedTasks = JSON.parse(savedTasks).map((task: Task) => ({
+        ...task,
+        deadline: task.deadline ? new Date(task.deadline) : null,
+        createdAt: new Date(task.createdAt),
+      }));
+
+      setTasks(parsedTasks);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -23,7 +41,7 @@ export default function AddPlanPage() {
       deadline: deadline ? new Date(deadline) : null,
       priority,
       completed: false,
-      description:"Chicken",
+      description:"",
       createdAt: new Date(),
     };
 
@@ -36,10 +54,31 @@ export default function AddPlanPage() {
     setPriority("Medium");
   }
 
+  function deleteTask(id: string) {
+    setTasks(tasks.filter((task) => task.id !== id));
+  }
+
+  function toggleComplete(id: string) {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              completed: !task.completed,
+            }
+          : task
+      )
+    );
+  }
+
   return (
     <main className="min-h-screen bg-gray-50 px-6 py-8">
       <section className="mx-auto max-w-2xl">
-        <h1 className="text-3xl font-bold">Add a Plan</h1>
+        <a href="/dashboard" className="text-sm text-gray-600">
+          ← Back to Dashboard
+        </a>
+
+        <h1 className="mt-4 text-3xl font-bold">Add a Plan</h1>
         <p className="mt-2 text-gray-600">
           Start by adding something you need to do.
         </p>
@@ -133,16 +172,43 @@ export default function AddPlanPage() {
                   key={task.id}
                   className="rounded-2xl bg-white p-5 shadow-sm"
                 >
-                  <h3 className="font-semibold">{task.title}</h3>
-                  <p className="mt-1 text-sm text-gray-600">
-                    {task.type} • {task.duration} minutes • {task.priority}
-                  </p>
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h3
+                        className={`font-semibold ${
+                          task.completed ? "text-gray-400 line-through" : ""
+                        }`}
+                      >
+                        {task.title}
+                      </h3>
 
-                  {task.deadline && (
-                    <p className="mt-1 text-sm text-gray-600">
-                      Deadline: {task.deadline.toLocaleDateString()}
-                    </p>
-                  )}
+                      <p className="mt-1 text-sm text-gray-600">
+                        {task.type} • {task.duration} minutes • {task.priority}
+                      </p>
+
+                      {task.deadline && (
+                        <p className="mt-1 text-sm text-gray-600">
+                          Deadline: {task.deadline.toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <button
+                        onClick={() => toggleComplete(task.id)}
+                        className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                      >
+                        {task.completed ? "Undo" : "Done"}
+                      </button>
+
+                      <button
+                        onClick={() => deleteTask(task.id)}
+                        className="rounded-lg bg-red-500 px-3 py-2 text-sm text-white"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
